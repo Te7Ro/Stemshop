@@ -1,6 +1,6 @@
 
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(255) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE products (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     article VARCHAR(100) NOT NULL UNIQUE, -- артикул
     price INTEGER NOT NULL CHECK (price >= 0),
@@ -25,7 +25,7 @@ CREATE TABLE products (
 );
 
 CREATE TABLE orders (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     total_price INTEGER NOT NULL CHECK (total_price >= 0),
     status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
@@ -34,7 +34,7 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE order_items (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
     price INTEGER NOT NULL CHECK (price >= 0),
@@ -42,7 +42,7 @@ CREATE TABLE order_items (
 );
 
 CREATE TABLE order_status_history (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     old_status VARCHAR(50),
     new_status VARCHAR(50) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE order_status_history (
 );
 
 CREATE TABLE payments (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     amount INTEGER NOT NULL CHECK (amount >= 0),
     payment_method VARCHAR(50) NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE payments (
 );
 
 CREATE TABLE shipping (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     address TEXT NOT NULL,
     city VARCHAR(100) NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE shipping (
 );
 
 CREATE TABLE coupons (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE,
     discount_percent INTEGER CHECK (discount_percent >= 0 AND discount_percent <= 100),
     discount_amount INTEGER CHECK (discount_amount >= 0),
@@ -84,13 +84,13 @@ CREATE TABLE coupons (
 );
 
 CREATE TABLE order_coupons (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     coupon_id INTEGER NOT NULL REFERENCES coupons(id) ON DELETE CASCADE
 );
 
 CREATE TABLE reviews (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),

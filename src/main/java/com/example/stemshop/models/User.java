@@ -2,19 +2,24 @@ package com.example.stemshop.models;
 
 import com.example.stemshop.data.Role;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Entity
 @Table(name="users")
 @Getter @Setter
-@RequiredArgsConstructor
-public class User {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class User implements UserDetails {
     @Column(name="id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,4 +48,36 @@ public class User {
     @Column(name="updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.role.getPermissions().stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
