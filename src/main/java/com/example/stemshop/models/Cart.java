@@ -6,20 +6,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="order_coupons")
+@Table(name="cart")
 @Getter @Setter
 @RequiredArgsConstructor
-public class OrderCoupon {
+public class Cart {
     @Column(name="id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name="order_id")
-    @ManyToOne
-    private Order order;
+    @JoinColumn(name="user_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User user;
 
-    @JoinColumn(name="coupon_id")
+    @JoinColumn(name="product_id")
     @ManyToOne
-    private Coupon coupon;
+    private Product product;
 }

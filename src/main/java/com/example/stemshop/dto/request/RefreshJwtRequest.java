@@ -1,4 +1,4 @@
-package com.example.stemshop.dto;
+package com.example.stemshop.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -5,7 +5,7 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
-    role VARCHAR(50) NOT NULL DEFAULT 'CUSTOMER',
+    role VARCHAR(50) NOT NULL DEFAULT 'ROLE_CUSTOMER',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -20,6 +20,8 @@ CREATE TABLE products (
     technical_characteristics TEXT,
     stock INT NOT NULL DEFAULT 0 CHECK (stock >= 0),
     brand VARCHAR(255),
+    rating NUMERIC(5,2) NOT NULL DEFAULT 0,
+    rating_count INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

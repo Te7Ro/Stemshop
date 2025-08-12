@@ -16,7 +16,7 @@ public class Review {
     @Column(name="id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @JoinColumn(name="product_id")
     @ManyToOne

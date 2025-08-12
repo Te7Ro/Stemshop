@@ -1,4 +1,4 @@
-package com.example.stemshop.dto;
+package com.example.stemshop.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

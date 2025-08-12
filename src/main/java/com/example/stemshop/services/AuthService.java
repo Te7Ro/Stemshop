@@ -1,13 +1,14 @@
 package com.example.stemshop.services;
 
 import com.example.stemshop.data.Role;
-import com.example.stemshop.dto.JwtResponse;
-import com.example.stemshop.dto.LoginRequest;
-import com.example.stemshop.dto.RegisterRequest;
+import com.example.stemshop.dto.response.JwtResponse;
+import com.example.stemshop.dto.request.LoginRequest;
+import com.example.stemshop.dto.request.RegisterRequest;
 import com.example.stemshop.exceptions.AuthException;
 import com.example.stemshop.models.User;
 import com.example.stemshop.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class AuthService {
         user.setPassword(registerRequest.getPassword());
         user.setFullName(registerRequest.getFullName());
         user.setPhone(registerRequest.getPhone());
-        user.setRole(Role.CUSTOMER);
+        user.setRole(Role.ROLE_CUSTOMER);
 
         if(!userRepository.existsByEmail(registerRequest.getEmail())) {
             userRepository.save(user);

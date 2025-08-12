@@ -2,6 +2,7 @@ package com.example.stemshop.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,7 +18,7 @@ public class Product {
     @Column(name="id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(name="name")
     private String name;
@@ -31,7 +32,7 @@ public class Product {
     @Column(name="photo")
     private String photo;
 
-    @Column(name="desctiption")
+    @Column(name="description")
     private String description;
 
     @Column(name="technical_characteristics")
@@ -42,6 +43,12 @@ public class Product {
 
     @Column(name="brand")
     private String brand;
+
+    @Column(name="rating")
+    private Double rating;
+
+    @Column(name="rating_count")
+    private Integer ratingCount;
 
     @Column(name="created_at")
     @CreationTimestamp

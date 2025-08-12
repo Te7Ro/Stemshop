@@ -25,7 +25,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/login", "/api/auth/token", "/api/auth/register").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/catalog").permitAll()
+                        .requestMatchers("/api/product/**").permitAll()
+                        .requestMatchers("/api/product/add").hasAnyRole("STORE_ADMIN", "CONTENT_MANAGER")
+                        .requestMatchers("/api/product/*/update").hasAnyRole("STORE_ADMIN", "CONTENT_MANAGER")
+                        .requestMatchers("/api/product/*/delete").hasAnyRole("STORE_ADMIN", "CONTENT_MANAGER")
                         .anyRequest().authenticated()
                 )
                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class);
