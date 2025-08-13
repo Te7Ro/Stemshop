@@ -1,6 +1,6 @@
 package com.example.stemshop.util;
 
-import com.example.stemshop.models.JwtAuthentication;
+import com.example.stemshop.security.JwtAuthentication;
 import io.jsonwebtoken.Claims;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

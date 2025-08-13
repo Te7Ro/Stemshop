@@ -1,13 +1,11 @@
 package com.example.stemshop.models;
 
-import com.example.stemshop.data.ShippingMethod;
-import com.example.stemshop.data.ShippingStatus;
+import com.example.stemshop.data.enums.ShippingMethod;
+import com.example.stemshop.data.enums.ShippingStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 

@@ -1,4 +1,4 @@
-package com.example.stemshop.data;
+package com.example.stemshop.data.enums;
 
 import java.util.Set;
 

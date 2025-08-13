@@ -1,7 +1,7 @@
 package com.example.stemshop.filter;
 
-import com.example.stemshop.models.JwtAuthentication;
-import com.example.stemshop.services.JwtProvider;
+import com.example.stemshop.security.JwtAuthentication;
+import com.example.stemshop.security.JwtProvider;
 import com.example.stemshop.util.JwtUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

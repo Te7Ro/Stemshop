@@ -1,7 +1,7 @@
 package com.example.stemshop.models;
 
-import com.example.stemshop.data.PaymentMethod;
-import com.example.stemshop.data.PaymentStatus;
+import com.example.stemshop.data.enums.PaymentMethod;
+import com.example.stemshop.data.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

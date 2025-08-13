@@ -18,6 +18,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
+    private final String STORE_ADMIN = "STORE_ADMIN";
+    private final String CONTENT_MANAGER = "CONTENT_MANAGER";
+    private final String SUPPORT = "SUPPORT";
+    private final String CUSTOMRE = "CUSTOMER";
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -28,9 +32,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/catalog").permitAll()
                         .requestMatchers("/api/product/**").permitAll()
-                        .requestMatchers("/api/product/add").hasAnyRole("STORE_ADMIN", "CONTENT_MANAGER")
-                        .requestMatchers("/api/product/*/update").hasAnyRole("STORE_ADMIN", "CONTENT_MANAGER")
-                        .requestMatchers("/api/product/*/delete").hasAnyRole("STORE_ADMIN", "CONTENT_MANAGER")
+                        .requestMatchers("/api/product/add").hasAnyRole(STORE_ADMIN, CONTENT_MANAGER)
+                        .requestMatchers("/api/product/*/update").hasAnyRole(STORE_ADMIN, CONTENT_MANAGER)
+                        .requestMatchers("/api/product/*/delete").hasAnyRole(STORE_ADMIN, CONTENT_MANAGER)
                         .anyRequest().authenticated()
                 )
                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class);

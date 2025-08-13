@@ -1,4 +1,4 @@
-package com.example.stemshop.dto.response;
+package com.example.stemshop.dto.response.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

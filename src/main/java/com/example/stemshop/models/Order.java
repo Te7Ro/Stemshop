@@ -1,6 +1,6 @@
 package com.example.stemshop.models;
 
-import com.example.stemshop.data.OrderStatus;
+import com.example.stemshop.data.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

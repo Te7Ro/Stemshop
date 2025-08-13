@@ -1,11 +1,12 @@
-package com.example.stemshop.services;
+package com.example.stemshop.services.product;
 
-import com.example.stemshop.dto.request.ProductAddRequest;
-import com.example.stemshop.dto.request.ProductUpdateRequest;
-import com.example.stemshop.dto.response.ProductResponse;
+import com.example.stemshop.dto.request.product.ProductAddRequest;
+import com.example.stemshop.dto.request.product.ProductUpdateRequest;
+import com.example.stemshop.dto.response.product.ProductResponse;
 import com.example.stemshop.exceptions.ProductException;
 import com.example.stemshop.models.Product;
 import com.example.stemshop.repositories.ProductRepository;
+import com.example.stemshop.util.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,26 +14,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-
-    private ProductResponse toResponse(Product product) {
-        return new ProductResponse(
-                product.getName(),
-                product.getArticle(),
-                product.getPrice(),
-                product.getPhoto(),
-                product.getDescription(),
-                product.getTechnicalCharacteristics(),
-                product.getStock(),
-                product.getBrand(),
-                product.getRating(),
-                product.getRatingCount()
-        );
-    }
+    private final ProductMapper productMapper;
 
     public ProductResponse getProductByArticle(String article) {
         final Product product = productRepository.findByArticle(article)
                 .orElseThrow(() -> new ProductException("Товар не найден"));
-        return toResponse(product);
+        return productMapper.toResponse(product);
     }
 
     public ProductResponse addProduct(ProductAddRequest request) {
@@ -46,7 +33,7 @@ public class ProductService {
         product.setStock(request.getStock());
         product.setBrand(request.getBrand());
         productRepository.save(product);
-        return toResponse(product);
+        return productMapper.toResponse(product);
     }
 
     public ProductResponse updateProduct(String article, ProductUpdateRequest request) {
@@ -60,7 +47,7 @@ public class ProductService {
         if(request.getStock() != null) {product.setStock(request.getStock());}
         if(request.getBrand() != null) {product.setBrand(request.getBrand());}
         productRepository.save(product);
-        return toResponse(product);
+        return productMapper.toResponse(product);
 
     }
 

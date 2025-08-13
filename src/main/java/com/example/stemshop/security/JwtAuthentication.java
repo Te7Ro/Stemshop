@@ -1,4 +1,4 @@
-package com.example.stemshop.models;
+package com.example.stemshop.security;
 
 import lombok.Getter;
 import lombok.Setter;

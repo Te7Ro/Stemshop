@@ -1,16 +1,14 @@
-package com.example.stemshop.services;
+package com.example.stemshop.services.catalog;
 
 import com.example.stemshop.models.Product;
 import com.example.stemshop.repositories.ProductRepository;
 import com.example.stemshop.util.ProductSpecification;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -38,7 +36,7 @@ public class CatalogService {
         }
 
         // Если нужна простая сортировка
-        Sort sort = Sort.unsorted();
+        Sort sort;
         if ("newest".equalsIgnoreCase(sortBy)) {
             sort = Sort.by(Sort.Direction.DESC, "createdAt");
             return productRepository.findAll(spec, sort);

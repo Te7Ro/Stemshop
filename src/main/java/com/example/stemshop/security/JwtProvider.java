@@ -1,4 +1,4 @@
-package com.example.stemshop.services;
+package com.example.stemshop.security;
 
 import com.example.stemshop.models.User;
 import io.jsonwebtoken.Claims;

@@ -1,9 +1,9 @@
 package com.example.stemshop.controller;
 
-import com.example.stemshop.dto.request.ProductAddRequest;
-import com.example.stemshop.dto.request.ProductUpdateRequest;
-import com.example.stemshop.dto.response.ProductResponse;
-import com.example.stemshop.services.ProductService;
+import com.example.stemshop.dto.request.product.ProductAddRequest;
+import com.example.stemshop.dto.request.product.ProductUpdateRequest;
+import com.example.stemshop.dto.response.product.ProductResponse;
+import com.example.stemshop.services.product.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

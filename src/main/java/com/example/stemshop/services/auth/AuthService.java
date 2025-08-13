@@ -1,14 +1,14 @@
-package com.example.stemshop.services;
+package com.example.stemshop.services.auth;
 
-import com.example.stemshop.data.Role;
-import com.example.stemshop.dto.response.JwtResponse;
-import com.example.stemshop.dto.request.LoginRequest;
-import com.example.stemshop.dto.request.RegisterRequest;
+import com.example.stemshop.data.enums.Role;
+import com.example.stemshop.dto.response.auth.JwtResponse;
+import com.example.stemshop.dto.request.auth.LoginRequest;
+import com.example.stemshop.dto.request.auth.RegisterRequest;
 import com.example.stemshop.exceptions.AuthException;
 import com.example.stemshop.models.User;
 import com.example.stemshop.repositories.UserRepository;
+import com.example.stemshop.security.JwtProvider;
 import io.jsonwebtoken.Claims;
-import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,7 @@
-package com.example.stemshop.dto.response;
+package com.example.stemshop.dto.response.product;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @AllArgsConstructor

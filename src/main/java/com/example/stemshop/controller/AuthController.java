@@ -1,10 +1,10 @@
 package com.example.stemshop.controller;
 
-import com.example.stemshop.dto.response.JwtResponse;
-import com.example.stemshop.dto.request.LoginRequest;
-import com.example.stemshop.dto.request.RefreshJwtRequest;
-import com.example.stemshop.dto.request.RegisterRequest;
-import com.example.stemshop.services.AuthService;
+import com.example.stemshop.dto.response.auth.JwtResponse;
+import com.example.stemshop.dto.request.auth.LoginRequest;
+import com.example.stemshop.dto.request.auth.RefreshJwtRequest;
+import com.example.stemshop.dto.request.auth.RegisterRequest;
+import com.example.stemshop.services.auth.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

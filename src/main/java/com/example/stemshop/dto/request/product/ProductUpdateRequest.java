@@ -1,4 +1,4 @@
-package com.example.stemshop.dto.request;
+package com.example.stemshop.dto.request.product;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
