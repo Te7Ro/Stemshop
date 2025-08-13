@@ -11,6 +11,7 @@ import com.example.stemshop.security.JwtProvider;
 import io.jsonwebtoken.Claims;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -85,5 +86,12 @@ public class AuthService {
             }
         }
         throw new AuthException("Invalid JWT token");
+    }
+
+    public Long getUserId() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email)
+                .map(User::getId)
+                .orElseThrow(() -> new AuthException("Пользователь не найден"));
     }
 }

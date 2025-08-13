@@ -8,6 +8,7 @@ import com.example.stemshop.models.User;
 import com.example.stemshop.repositories.FavouritesRepository;
 import com.example.stemshop.repositories.ProductRepository;
 import com.example.stemshop.repositories.UserRepository;
+import com.example.stemshop.services.auth.AuthService;
 import com.example.stemshop.util.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FavouritesService {
+    private final AuthService authService;
     private final FavouritesRepository favouritesRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
@@ -30,7 +32,8 @@ public class FavouritesService {
 
     @Cacheable(value = "favourites", key = "#userId")
     @Transactional(readOnly = true)
-    public List<ProductResponse> getFavourites(Long userId) {
+    public List<ProductResponse> getFavourites() {
+        Long userId = authService.getUserId();
         final List<Product> products = favouritesRepository.findProductByUserId(userId)
                 .orElse(new ArrayList<>());
         final List<ProductResponse> productResponses = new ArrayList<>();
@@ -42,7 +45,8 @@ public class FavouritesService {
 
     @CachePut(value = "favourites", key = "#userId")
     @Transactional
-    public void updateFavourites(Long userId, List<Long> newProductIds) {
+    public void updateFavourites(List<Long> newProductIds) {
+        Long userId = authService.getUserId();
         final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new FavouritesException("Пользователь не найден"));
 
@@ -71,7 +75,7 @@ public class FavouritesService {
     }
 
     @CacheEvict(value = "favourites", key = "#userId")
-    public void clearFavourites(Long userId) {
-        favouritesRepository.deleteAllByUserId(userId);
+    public void clearFavourites() {
+        favouritesRepository.deleteAllByUserId(authService.getUserId());
     }
 }

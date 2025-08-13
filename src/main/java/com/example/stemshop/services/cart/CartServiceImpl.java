@@ -8,6 +8,7 @@ import com.example.stemshop.models.User;
 import com.example.stemshop.repositories.CartRepository;
 import com.example.stemshop.repositories.ProductRepository;
 import com.example.stemshop.repositories.UserRepository;
+import com.example.stemshop.services.auth.AuthService;
 import com.example.stemshop.util.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -24,6 +25,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
+    private final AuthService authService;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
@@ -32,7 +34,8 @@ public class CartServiceImpl implements CartService {
     @Override
     @Cacheable(value = "cart", key = "#userId")
     @Transactional(readOnly = true)
-    public CartResponse getCart(Long userId) {
+    public CartResponse getCart() {
+        Long userId = authService.getUserId();
         final User user = userRepository.findById(userId).orElse(new User());
         final List<Cart> cart = cartRepository.findAllByUser(user).orElse(new ArrayList<>());
         Map<ProductResponse, Integer> response = new HashMap<>();
@@ -45,7 +48,8 @@ public class CartServiceImpl implements CartService {
     @Override
     @CachePut(value = "cart", key = "#userId")
     @Transactional
-    public void updateCart(Long userId, List<Long> newProductIds) {
+    public void updateCart(List<Long> newProductIds) {
+        Long userId = authService.getUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CartException("Пользователь не зарегистрирован"));
 
@@ -64,6 +68,7 @@ public class CartServiceImpl implements CartService {
             cart.setUser(user);
             cart.setProduct(productRepository.findById(id).orElseThrow(() -> new CartException("Товар не найден")));
             cart.setQuantity(cart.getQuantity()+1);
+            cartRepository.save(cart);
         });
 
         if (!toRemove.isEmpty()) {
@@ -73,7 +78,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @CacheEvict(value = "cart", key = "#userId")
-    public void clearCart(Long userId) {
-        cartRepository.deleteAllByUserId(userId);
+    public void clearCart() {
+        cartRepository.deleteAllByUserId(authService.getUserId());
     }
 }
