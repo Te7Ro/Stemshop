@@ -6,7 +6,6 @@ import com.example.stemshop.dto.response.order.PaymentResponse;
 import com.example.stemshop.exceptions.NotFoundException;
 import com.example.stemshop.models.Order;
 import com.example.stemshop.models.Payment;
-import com.example.stemshop.repositories.OrderRepository;
 import com.example.stemshop.repositories.PaymentRepository;
 import com.example.stemshop.util.PaymentMapper;
 import com.stripe.exception.StripeException;
@@ -22,7 +21,6 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
-    private final OrderRepository orderRepository;
 
     public String createCheckoutSession(Order order) throws StripeException {
         Payment payment = new Payment();
@@ -59,10 +57,8 @@ public class PaymentService {
 
     }
 
-    public PaymentResponse updatePaymentStatus(Long orderId, PaymentStatus paymentStatus) throws StripeException {
-        final Order order = orderRepository.findById(orderId).
-                orElseThrow(() -> new NotFoundException("Заказ не найден"));
-        final Payment payment = paymentRepository.findByOrder(order)
+    public PaymentResponse updatePaymentStatus(Long paymentId, PaymentStatus paymentStatus) {
+        final Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new NotFoundException("Транзакция не найдена"));
 
         payment.setPaymentStatus(paymentStatus);

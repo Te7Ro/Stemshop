@@ -1,5 +1,6 @@
 package com.example.stemshop.services.review;
 
+import com.example.stemshop.dto.request.review.ReviewAddRequest;
 import com.example.stemshop.dto.response.review.ReviewResponse;
 import com.example.stemshop.exceptions.NotFoundException;
 import com.example.stemshop.exceptions.ReviewException;
@@ -11,7 +12,6 @@ import com.example.stemshop.repositories.ProductRepository;
 import com.example.stemshop.repositories.ReviewRepository;
 import com.example.stemshop.repositories.UserRepository;
 import com.example.stemshop.services.auth.AuthService;
-import com.example.stemshop.util.ProductMapper;
 import com.example.stemshop.util.ReviewMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +32,10 @@ public class ReviewService {
     private final ReviewMapper reviewMapper;
 
     @Transactional
-    public void makeReview(String productArticle, int rating, String comment) {
+    public void makeReview(ReviewAddRequest request) {
         final User user = userRepository.findById(authService.getUserId())
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        final Product product = productRepository.findByArticle(productArticle)
+        final Product product = productRepository.findByArticle(request.getProductArticle())
                 .orElseThrow(() -> new NotFoundException("Товар не найден"));
 
         if(!orderRepository.existsProductByUser(user.getId(), product.getId())) {
@@ -45,14 +45,14 @@ public class ReviewService {
         Review review = new Review();
         review.setProduct(product);
         review.setUser(user);
-        review.setRating(rating);
-        review.setComment(comment);
+        review.setRating(request.getRating());
+        review.setComment(request.getComment());
         reviewRepository.save(review);
 
         Double oldRating = product.getRating();
         Integer ratingCount = product.getRatingCount();
 
-        Double newRating = ((oldRating * ratingCount) + rating) / (ratingCount + 1);
+        Double newRating = ((oldRating * ratingCount) + request.getRating()) / (ratingCount + 1);
         product.setRating(newRating);
         product.setRatingCount(ratingCount+1);
         productRepository.save(product);

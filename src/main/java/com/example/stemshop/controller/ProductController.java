@@ -6,6 +6,7 @@ import com.example.stemshop.dto.response.product.ProductResponse;
 import com.example.stemshop.services.product.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +23,11 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ProductResponse> addProduct(@Valid @RequestBody ProductAddRequest request) {
-        return ResponseEntity.ok(productService.addProduct(request));
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductAddRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(request));
     }
 
-    @PostMapping("/{article}/update")
+    @PatchMapping("/{article}")
     public ResponseEntity<ProductResponse> updateProduct(
             @PathVariable String article,
             @Valid @RequestBody ProductUpdateRequest request
@@ -34,8 +35,9 @@ public class ProductController {
         return ResponseEntity.ok(productService.updateProduct(article, request));
     }
 
-    @PostMapping("/{article}/delete")
-    public ResponseEntity<String> deleteProduct(@PathVariable String article) {
-        return ResponseEntity.ok(productService.deleteProduct(article));
+    @DeleteMapping("/{article}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable String article) {
+        productService.deleteProduct(article);
+        return ResponseEntity.noContent().build();
     }
 }

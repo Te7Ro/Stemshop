@@ -51,7 +51,7 @@ public class CouponService {
         return couponMapper.toResponse(coupon);
     }
 
-    public String deleteCoupon(String code) {
+    public void deleteCoupon(String code) {
         final Coupon coupon = couponRepository.findByCode(code)
                 .orElseThrow(() -> new CouponException("Купон не найден"));
         couponRepository.delete(coupon);
