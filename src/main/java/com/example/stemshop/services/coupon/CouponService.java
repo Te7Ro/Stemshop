@@ -1,4 +1,4 @@
-package com.example.stemshop.services.order;
+package com.example.stemshop.services.coupon;
 
 import com.example.stemshop.dto.request.coupon.CouponAddRequest;
 import com.example.stemshop.dto.request.coupon.CouponUpdateRequest;

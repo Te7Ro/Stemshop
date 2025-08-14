@@ -6,7 +6,7 @@ import com.example.stemshop.models.Cart;
 import java.util.List;
 
 public interface CartService {
-    CartResponse getCart();
-    void updateCart(List<Long> newProductIds);
-    void clearCart();
+    CartResponse getCart(Long userId);
+    void updateCart(List<Long> newProductIds, Long userId);
+    void clearCart(Long userId);
 }

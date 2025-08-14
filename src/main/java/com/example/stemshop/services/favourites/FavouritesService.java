@@ -9,8 +9,10 @@ import com.example.stemshop.repositories.FavouritesRepository;
 import com.example.stemshop.repositories.ProductRepository;
 import com.example.stemshop.repositories.UserRepository;
 import com.example.stemshop.services.auth.AuthService;
+import com.example.stemshop.services.user.UserService;
 import com.example.stemshop.util.ProductMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -22,19 +24,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@CacheConfig(cacheNames = "favouritesCache")
 @RequiredArgsConstructor
 public class FavouritesService {
-    private final AuthService authService;
     private final FavouritesRepository favouritesRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final ProductMapper productMapper;
+    private final UserService userService;
 
-    @Cacheable(value = "favourites", key = "#userId")
+    private User getCurrentUser() {
+        return userService.getUser();
+    }
+
+    @Cacheable(cacheNames = "favourites", key = "userId")
     @Transactional(readOnly = true)
-    public List<ProductResponse> getFavourites() {
-        Long userId = authService.getUserId();
-        final List<Product> products = favouritesRepository.findProductByUserId(userId)
+    public List<ProductResponse> getFavourites(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new FavouritesException("User not found"));
+        final List<Product> products = favouritesRepository.findProductByUser(user)
                 .orElse(new ArrayList<>());
         final List<ProductResponse> productResponses = new ArrayList<>();
         for (Product product : products) {
@@ -43,14 +50,12 @@ public class FavouritesService {
         return productResponses;
     }
 
-    @CachePut(value = "favourites", key = "#userId")
+    @CachePut(cacheNames = "favourites", key = "userId")
     @Transactional
-    public void updateFavourites(List<Long> newProductIds) {
-        Long userId = authService.getUserId();
-        final User user = userRepository.findById(userId)
-                .orElseThrow(() -> new FavouritesException("Пользователь не найден"));
+    public void updateFavourites(List<Long> newProductIds, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new FavouritesException("User not found"));
 
-        List<Long> currentProductIds = favouritesRepository.findProductIdByUserId(userId)
+        List<Long> currentProductIds = favouritesRepository.findProductIdByUser(user)
                 .orElse(new ArrayList<>());
 
         List<Long> toAdd = newProductIds.stream()
@@ -69,13 +74,14 @@ public class FavouritesService {
         });
 
         if (!toRemove.isEmpty()) {
-            favouritesRepository.deleteByUserIdAndProductIdIn(userId, toRemove);
+            favouritesRepository.deleteByUserIdAndProductIdIn(user.getId(), toRemove);
         }
 
     }
 
-    @CacheEvict(value = "favourites", key = "#userId")
-    public void clearFavourites() {
-        favouritesRepository.deleteAllByUserId(authService.getUserId());
+    @CacheEvict(cacheNames = "favourites", key = "#userId")
+    public void clearFavourites(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new FavouritesException("User not found"));
+        favouritesRepository.deleteAllByUserId(user.getId());
     }
 }

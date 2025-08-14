@@ -1,8 +1,5 @@
-package com.example.stemshop.filter;
+package com.example.stemshop.security;
 
-import com.example.stemshop.security.JwtAuthentication;
-import com.example.stemshop.security.JwtProvider;
-import com.example.stemshop.util.JwtUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,10 +39,9 @@ public class JwtFilter extends GenericFilterBean {
 
     private String getTokenFromRequest(HttpServletRequest request) {
         final String bearer = request.getHeader(AUTHORIZATION);
-        if(StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
+        if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
             return bearer.substring(7);
         }
         return null;
     }
-
 }

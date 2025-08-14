@@ -12,6 +12,7 @@ import com.example.stemshop.repositories.ProductRepository;
 import com.example.stemshop.repositories.ReviewRepository;
 import com.example.stemshop.repositories.UserRepository;
 import com.example.stemshop.services.auth.AuthService;
+import com.example.stemshop.services.user.UserService;
 import com.example.stemshop.util.ReviewMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +31,11 @@ public class ReviewService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final ReviewMapper reviewMapper;
+    private final UserService userService;
 
     @Transactional
     public void makeReview(ReviewAddRequest request) {
-        final User user = userRepository.findById(authService.getUserId())
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        final User user = userService.getUser();
         final Product product = productRepository.findByArticle(request.getProductArticle())
                 .orElseThrow(() -> new NotFoundException("Товар не найден"));
 

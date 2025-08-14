@@ -3,7 +3,7 @@ package com.example.stemshop.controller;
 import com.example.stemshop.dto.request.coupon.CouponAddRequest;
 import com.example.stemshop.dto.request.coupon.CouponUpdateRequest;
 import com.example.stemshop.dto.response.coupon.CouponResponse;
-import com.example.stemshop.services.order.CouponService;
+import com.example.stemshop.services.coupon.CouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

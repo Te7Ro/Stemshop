@@ -43,7 +43,7 @@ public class AuthService {
         user.setPassword(registerRequest.getPassword());
         user.setFullName(registerRequest.getFullName());
         user.setPhone(registerRequest.getPhone());
-        user.setRole(Role.ROLE_CUSTOMER);
+        user.setRole(Role.CUSTOMER);
 
         if(!userRepository.existsByEmail(registerRequest.getEmail())) {
             userRepository.save(user);
@@ -86,12 +86,5 @@ public class AuthService {
             }
         }
         throw new AuthException("Invalid JWT token");
-    }
-
-    public Long getUserId() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
-                .map(User::getId)
-                .orElseThrow(() -> new AuthException("Пользователь не найден"));
     }
 }

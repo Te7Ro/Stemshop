@@ -69,8 +69,8 @@ CREATE TABLE shipping (
 CREATE TABLE coupons (
     id SERIAL PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE,
-    discount_percent INTEGER CHECK (discount_percent >= 0 AND discount_percent <= 100),
-    discount_amount INTEGER CHECK (discount_amount >= 0),
+    discount_percent INTEGER NOT NULL CHECK (discount_percent >= 0 AND discount_percent <= 100),
+    discount_amount INTEGER NOT NULL CHECK (discount_amount >= 0),
     valid_from TIMESTAMP,
     valid_to TIMESTAMP,
     usage_limit INT CHECK (usage_limit >= 0)

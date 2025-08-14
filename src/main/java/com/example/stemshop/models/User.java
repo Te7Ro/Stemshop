@@ -10,7 +10,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -55,9 +57,19 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.role.getPermissions().stream()
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        // Добавляем саму роль (с префиксом ROLE_)
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+
+        // Добавляем все permissions
+        authorities.addAll(
+                this.role.getPermissions().stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .toList()
+        );
+
+        return authorities;
     }
 
     @Override

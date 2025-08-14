@@ -8,7 +8,8 @@ import com.example.stemshop.exceptions.ProductException;
 import com.example.stemshop.models.*;
 import com.example.stemshop.repositories.*;
 import com.example.stemshop.services.auth.AuthService;
-import com.example.stemshop.services.cart.CartService;
+import com.example.stemshop.services.coupon.CouponService;
+import com.example.stemshop.services.user.UserService;
 import com.example.stemshop.util.OrderMapper;
 import com.stripe.exception.StripeException;
 import jakarta.annotation.Nullable;
@@ -33,11 +34,11 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     private final OrderMapper orderMapper;
+    private final UserService userService;
 
     @Transactional
     public String makeOrder(@Nullable String couponCode) throws StripeException {
-        final User user = userRepository.findById(authService.getUserId())
-                .orElseThrow(() -> new OrderException("Пользователь не найден"));
+        final User user = userService.getUser();
         Order order = new Order();
         order.setUser(user);
         order.setStatus(OrderStatus.PENDING);
@@ -81,8 +82,7 @@ public class OrderService {
     }
 
     public List<OrderResponse> getOrdersByUser() {
-        final User user = userRepository.findById(authService.getUserId())
-                .orElseThrow(() -> new OrderException("Пользователь не найден"));
+        final User user = userService.getUser();
         List<Order> orders = orderRepository.findAllByUser(user);
         List<OrderResponse> orderResponses = new ArrayList<>();
         for (Order order : orders) {

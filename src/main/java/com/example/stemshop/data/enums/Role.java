@@ -1,40 +1,46 @@
 package com.example.stemshop.data.enums;
 
-import java.util.Set;
+import java.util.List;
 
 public enum Role {
-    ROLE_STORE_ADMIN(Set.of(
-            "ROLE_STORE_ADMIN",
-            "PERM_MANAGE_STORE",
-            "PERM_MANAGE_INTEGRATIONS",
-            "PERM_MANAGE_USERS"
-    )),
-    ROLE_CONTENT_MANAGER(Set.of(
-            "ROLE_CONTENT_MANAGER",
-            "PERM_ADD_PRODUCTS",
-            "PERM_MANAGE_CATEGORIES",
-            "PERM_MANAGE_PROMOTIONS"
-    )),
-    ROLE_CUSTOMER(Set.of(
-            "ROLE_CUSTOMER",
-            "PERM_SEARCH_PRODUCTS",
-            "PERM_PLACE_ORDERS",
-            "PERM_TRACK_ORDERS"
-    )),
-    ROLE_SUPPORT(Set.of(
-            "ROLE_SUPPORT",
-            "PERM_UPDATE_ORDER_STATUS",
-            "PERM_HANDLE_RETURNS",
-            "PERM_MANAGE_DELIVERY"
-    ));
+    STORE_ADMIN(
+            List.of(
+                    "product:add",
+                    "product:update",
+                    "product:delete",
+                    "order:view",
+                    "order:update"
+            )
+    ),
+    CONTENT_MANAGER(
+            List.of(
+                    "product:add",
+                    "product:update",
+                    "product:delete"
+            )
+    ),
+    SUPPORT(
+            List.of(
+                    "order:view",
+                    "order:update"
+            )
+    ),
+    CUSTOMER(
+            List.of(
+                    "cart:view",
+                    "cart:update",
+                    "favourites:view",
+                    "favourites:update"
+            )
+    );
 
-    private final Set<String> permissions;
+    private final List<String> permissions;
 
-    Role(Set<String> permissions) {
+    Role(List<String> permissions) {
         this.permissions = permissions;
     }
 
-    public Set<String> getPermissions() {
+    public List<String> getPermissions() {
         return permissions;
     }
 }

@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="coupon")
+@Table(name="coupons")
 @Getter @Setter
 @RequiredArgsConstructor
 public class Coupon {
