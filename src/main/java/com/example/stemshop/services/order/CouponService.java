@@ -55,7 +55,6 @@ public class CouponService {
         final Coupon coupon = couponRepository.findByCode(code)
                 .orElseThrow(() -> new CouponException("Купон не найден"));
         couponRepository.delete(coupon);
-        return "Купон успешно удален";
     }
 
     @Transactional
