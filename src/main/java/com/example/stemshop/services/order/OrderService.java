@@ -10,6 +10,8 @@ import com.example.stemshop.repositories.*;
 import com.example.stemshop.services.auth.AuthService;
 import com.example.stemshop.services.cart.CartService;
 import com.example.stemshop.util.OrderMapper;
+import com.stripe.exception.StripeException;
+import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,18 +23,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
     private final AuthService authService;
+    private final PaymentService paymentService;
+    private final CouponService couponService;
+
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
+
     private final OrderMapper orderMapper;
 
     @Transactional
-    public OrderResponse makeOrder() {
+    public String makeOrder(@Nullable String couponCode) throws StripeException {
         final User user = userRepository.findById(authService.getUserId())
                 .orElseThrow(() -> new OrderException("Пользователь не найден"));
-        final Order order = new Order();
+        Order order = new Order();
         order.setUser(user);
         order.setStatus(OrderStatus.PENDING);
 
@@ -51,11 +57,16 @@ public class OrderService {
             orderItem.setPrice(product.getPrice());
             orderItemRepository.save(orderItem);
         }
+
+        if(couponCode != null) {
+            totalPrice = couponService.applyCoupon(couponCode, order);
+        }
+
         order.setTotalPrice(totalPrice);
         orderRepository.save(order);
 
 
-        return orderMapper.toResponse(order);
+        return paymentService.createCheckoutSession(order);
     }
 
     public OrderResponse changeOrderStatus(Long orderId, OrderStatusChangeRequest request) {

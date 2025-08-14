@@ -35,9 +35,6 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    @Column(name="transaction_id")
-    private String transactionId;
-
     @Column(name="created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;

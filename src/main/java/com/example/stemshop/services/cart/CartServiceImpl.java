@@ -3,6 +3,7 @@ package com.example.stemshop.services.cart;
 import com.example.stemshop.dto.response.cart.CartResponse;
 import com.example.stemshop.dto.response.product.ProductResponse;
 import com.example.stemshop.exceptions.CartException;
+import com.example.stemshop.exceptions.NotFoundException;
 import com.example.stemshop.models.Cart;
 import com.example.stemshop.models.User;
 import com.example.stemshop.repositories.CartRepository;
@@ -36,7 +37,8 @@ public class CartServiceImpl implements CartService {
     @Transactional(readOnly = true)
     public CartResponse getCart() {
         Long userId = authService.getUserId();
-        final User user = userRepository.findById(userId).orElse(new User());
+        final User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         final List<Cart> cart = cartRepository.findAllByUser(user).orElse(new ArrayList<>());
         Map<ProductResponse, Integer> response = new HashMap<>();
         for(Cart position : cart) {

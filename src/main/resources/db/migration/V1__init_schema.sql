@@ -43,21 +43,12 @@ CREATE TABLE order_items (
     quantity INT NOT NULL CHECK (quantity > 0)
 );
 
-CREATE TABLE order_status_history (
-    id SERIAL PRIMARY KEY,
-    order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-    old_status VARCHAR(50),
-    new_status VARCHAR(50) NOT NULL,
-    changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TABLE payments (
     id SERIAL PRIMARY KEY,
     order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     amount INTEGER NOT NULL CHECK (amount >= 0),
     payment_method VARCHAR(50) NOT NULL,
     payment_status VARCHAR(50) NOT NULL,
-    transaction_id VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

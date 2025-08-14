@@ -13,6 +13,5 @@ public class PaymentResponse {
     private int amount;
     private PaymentMethod paymentMethod;
     private PaymentStatus paymentStatus;
-    private String transactionId;
     private LocalDateTime createdAt;
 }
