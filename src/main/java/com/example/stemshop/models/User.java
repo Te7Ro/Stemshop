@@ -42,6 +42,18 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name="address")
+    private String address;
+
+    @Column(name="city")
+    private String city;
+
+    @Column(name="postal_code")
+    private String postalCode;
+
+    @Column(name="country")
+    private String country;
+
     @Column(name="created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;

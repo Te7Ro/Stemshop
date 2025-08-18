@@ -1,87 +1,70 @@
 package com.example.stemshop.services.favourites;
 
-import com.example.stemshop.dto.response.product.ProductResponse;
-import com.example.stemshop.exceptions.FavouritesException;
-import com.example.stemshop.models.Favourites;
-import com.example.stemshop.models.Product;
-import com.example.stemshop.models.User;
-import com.example.stemshop.repositories.FavouritesRepository;
+import com.example.stemshop.dto.response.favourites.FavouritesItem;
+import com.example.stemshop.dto.response.favourites.FavouritesResponse;
 import com.example.stemshop.repositories.ProductRepository;
-import com.example.stemshop.repositories.UserRepository;
-import com.example.stemshop.services.auth.AuthService;
-import com.example.stemshop.services.user.UserService;
-import com.example.stemshop.util.ProductMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Service
-@CacheConfig(cacheNames = "favouritesCache")
 @RequiredArgsConstructor
 public class FavouritesService {
-    private final FavouritesRepository favouritesRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final SetOperations<String, String> setOps;
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
-    private final ProductMapper productMapper;
-    private final UserService userService;
 
-    private User getCurrentUser() {
-        return userService.getUser();
+    @Value("${app.favorites.ttl-seconds:2592000}") // 30 дней по умолчанию
+    private int favoritesTtlSeconds;
+
+    private String favoritesKey(Long userId) {
+        return "favorites:" + userId;
+    }
+    public void addItem(Long userId, Long productId) {
+        String key = favoritesKey(userId);
+        setOps.add(key, productId.toString());
+        redisTemplate.expire(key, Duration.ofSeconds(favoritesTtlSeconds));
     }
 
-    @Cacheable(cacheNames = "favourites", key = "userId")
-    @Transactional(readOnly = true)
-    public List<ProductResponse> getFavourites(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new FavouritesException("User not found"));
-        final List<Product> products = favouritesRepository.findProductByUser(user)
-                .orElse(new ArrayList<>());
-        final List<ProductResponse> productResponses = new ArrayList<>();
-        for (Product product : products) {
-            productResponses.add(productMapper.toResponse(product));
-        }
-        return productResponses;
+    public void removeItem(Long userId, Long productId) {
+        setOps.remove(favoritesKey(userId), productId.toString());
     }
 
-    @CachePut(cacheNames = "favourites", key = "userId")
-    @Transactional
-    public void updateFavourites(List<Long> newProductIds, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new FavouritesException("User not found"));
+    public void clear(Long userId) {
+        redisTemplate.delete(favoritesKey(userId));
+    }
 
-        List<Long> currentProductIds = favouritesRepository.findProductIdByUser(user)
-                .orElse(new ArrayList<>());
+    public FavouritesResponse getFavorites(Long userId) {
+        String key = favoritesKey(userId);
+        Set<String> ids = setOps.members(key);
 
-        List<Long> toAdd = newProductIds.stream()
-                .filter(p -> !currentProductIds.contains(p))
-                .toList();
-
-        List<Long> toRemove = currentProductIds.stream()
-                .filter(p -> !newProductIds.contains(p))
-                .toList();
-
-        toAdd.forEach(id -> {
-            Favourites favourites = new Favourites();
-            favourites.setProduct(productRepository.findById(id).orElseThrow());
-            favourites.setUser(user);
-            favouritesRepository.save(favourites);
-        });
-
-        if (!toRemove.isEmpty()) {
-            favouritesRepository.deleteByUserIdAndProductIdIn(user.getId(), toRemove);
+        List<FavouritesItem> items = new ArrayList<>();
+        if (ids != null) {
+            for (String id : ids) {
+                Long productId = Long.valueOf(id);
+                productRepository.findById(productId).ifPresent(product -> {
+                    FavouritesItem item = FavouritesItem.builder()
+                            .productId(product.getId())
+                            .name(product.getName())
+                            .price(product.getPrice())
+                            .build();
+                    items.add(item);
+                });
+            }
         }
 
-    }
+        redisTemplate.expire(key, Duration.ofSeconds(favoritesTtlSeconds));
 
-    @CacheEvict(cacheNames = "favourites", key = "#userId")
-    public void clearFavourites(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new FavouritesException("User not found"));
-        favouritesRepository.deleteAllByUserId(user.getId());
+        return FavouritesResponse.builder()
+                .items(items)
+                .build();
     }
 }

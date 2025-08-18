@@ -1,11 +1,14 @@
-
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
-    role VARCHAR(50) NOT NULL DEFAULT 'ROLE_CUSTOMER',
+    role VARCHAR(50) NOT NULL DEFAULT 'CUSTOMER',
+    address VARCHAR(255),
+    city VARCHAR(100),
+    postal_code VARCHAR(20),
+    country VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -13,7 +16,7 @@ CREATE TABLE users (
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    article VARCHAR(100) NOT NULL UNIQUE, -- артикул
+    sku VARCHAR(100) NOT NULL UNIQUE, -- артикул
     price INTEGER NOT NULL CHECK (price >= 0),
     photo TEXT,
     description TEXT,
@@ -39,7 +42,6 @@ CREATE TABLE order_items (
     id SERIAL PRIMARY KEY,
     order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
-    price INTEGER NOT NULL CHECK (price >= 0),
     quantity INT NOT NULL CHECK (quantity > 0)
 );
 
@@ -69,8 +71,9 @@ CREATE TABLE shipping (
 CREATE TABLE coupons (
     id SERIAL PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE,
-    discount_percent INTEGER NOT NULL CHECK (discount_percent >= 0 AND discount_percent <= 100),
-    discount_amount INTEGER NOT NULL CHECK (discount_amount >= 0),
+    discount_type VARCHAR(20) NOT NULL CHECK (discount_type IN ('PERCENT', 'FIXED')),
+    discount_value INTEGER NOT NULL CHECK (discount_value >= 0),
+    min_order_amount INTEGER CHECK (min_order_amount >= 0), -- только для FIXED
     valid_from TIMESTAMP,
     valid_to TIMESTAMP,
     usage_limit INT CHECK (usage_limit >= 0)

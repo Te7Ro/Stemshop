@@ -23,9 +23,6 @@ public class OrderItem {
     @ManyToOne
     private Product product;
 
-    @Column(name="price")
-    private int price;
-
     @Column(name="quantity")
-    private int quantity;
+    private Integer quantity;
 }

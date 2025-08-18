@@ -1,13 +1,12 @@
 package com.example.stemshop.controller;
 
-import com.example.stemshop.dto.response.product.ProductResponse;
+import com.example.stemshop.dto.response.favourites.FavouritesResponse;
 import com.example.stemshop.services.favourites.FavouritesService;
 import com.example.stemshop.services.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/favourites")
@@ -17,20 +16,31 @@ public class FavouritesController {
     private final FavouritesService favouritesService;
     private final UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<ProductResponse>> getFavourites() {
-        return ResponseEntity.ok(favouritesService.getFavourites(userService.getUser().getId()));
+    private Long currentUserId() {
+        return userService.getUser().getId();
     }
 
-    @PutMapping
-    public ResponseEntity<Void> updateFavourites(@RequestBody List<Long> productIds) {
-        favouritesService.updateFavourites(productIds, userService.getUser().getId());
-        return ResponseEntity.noContent().build();
+    @GetMapping
+    public FavouritesResponse getFavourites(){
+        return favouritesService.getFavorites(currentUserId());
+    }
+
+    @PostMapping("/items/{productId}")
+    public ResponseEntity<Void> addItem(@PathVariable Long productId,
+                                        @RequestParam(defaultValue = "1") int qty) {
+        favouritesService.addItem(currentUserId(), productId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/items/{productId}")
+    public ResponseEntity<Void> removeItem(@PathVariable Long productId) {
+        favouritesService.removeItem(currentUserId(), productId);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> clearFavourites() {
-        favouritesService.clearFavourites(userService.getUser().getId());
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> clear() {
+        favouritesService.clear(currentUserId());
+        return ResponseEntity.ok().build();
     }
 }

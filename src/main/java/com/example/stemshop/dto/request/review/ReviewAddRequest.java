@@ -10,11 +10,11 @@ import lombok.Data;
 public class ReviewAddRequest {
     @NotBlank(message = "Артикул товара не может быть пустым")
     @Size(max = 50, message = "Артикул товара не должен превышать 50 символов")
-    private String productArticle;
+    private String productSku;
 
     @Min(value = 1, message = "Рейтинг должен быть не меньше 1")
     @Max(value = 5, message = "Рейтинг должен быть не больше 5")
-    private int rating;
+    private Integer rating;
 
     @NotBlank(message = "Комментарий не может быть пустым")
     @Size(max = 1000, message = "Комментарий не должен превышать 1000 символов")

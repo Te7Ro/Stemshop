@@ -1,5 +1,6 @@
 package com.example.stemshop.dto.request.coupon;
 
+import com.example.stemshop.data.enums.DiscountType;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -7,16 +8,19 @@ import java.time.LocalDateTime;
 
 @Data
 public class CouponUpdateRequest {
+    private DiscountType discountType;
 
-    @Min(value = 0, message = "Скидка в процентах не может быть меньше 0%")
-    @Max(value = 100, message = "Скидка в процентах не может быть больше 100%")
-    private Integer discountPercent;
+    @Min(value = 1, message = "Скидка должна быть больше 0")
+    private Integer discountValue;
 
-    @PositiveOrZero(message = "Количество купонов должна быть 0 или больше")
-    private Integer discountAmount;
+    @Min(value = 0, message = "Минимальная сумма заказа не может быть отрицательной")
+    private Integer minOrderAmount;
 
     private LocalDateTime validFrom;
 
     @Future(message = "Дата окончания должна быть в будущем")
     private LocalDateTime validTo;
+
+    @Min(value = 0, message = "Лимит использования не может быть отрицательным")
+    private Integer usageLimit;
 }

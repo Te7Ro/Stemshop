@@ -1,23 +1,25 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 jwt:
   secret:
-    access: qBTmv4oXFFR2GwjexDJ4t6fsIUIUhhXqlktXjXdkcyygs8nPVEwMfo29VDRRepYDVV5IkIxBMzr7OEHXEHd37w==
-    refresh: zL1HB3Pch05Avfynovxrf/kpF9O2m4NCWKJUjEp27s9J2jEG3ifiKCGylaZ8fDeoONSTJP/wAzKawB8F9rOMNg==
+    access: ${JWT_ACCESS}
+    refresh: ${JWT_REFRESH}
 
 stripe:
-  secret-key: sk_test_123456789
-  public-key: pk_test_123456789
+  secret-key: ${STRIPE_SECRET_KEY}
+  public-key: ${STRIPE_PUBLIC_KEY}
+  success-url: ${STRIPE_SUCCESS_URL}
+  cancel-url: ${STRIPE_CANCEL_URL}
 
 spring:
   application:
     name: stemshop
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/stemshop
-    username: postgres
-    password: 12345
+    url: jdbc:postgresql://${DB_HOST}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -35,5 +37,5 @@ spring:
     type: redis
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
       port: 6379

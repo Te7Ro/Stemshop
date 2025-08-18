@@ -1,25 +1,41 @@
 package com.example.stemshop.services.order;
 
+import com.example.stemshop.data.enums.OrderStatus;
 import com.example.stemshop.data.enums.PaymentMethod;
 import com.example.stemshop.data.enums.PaymentStatus;
 import com.example.stemshop.dto.response.order.PaymentResponse;
 import com.example.stemshop.exceptions.NotFoundException;
+import com.example.stemshop.exceptions.OrderException;
 import com.example.stemshop.models.Order;
+import com.example.stemshop.models.OrderItem;
 import com.example.stemshop.models.Payment;
+import com.example.stemshop.models.Product;
+import com.example.stemshop.repositories.OrderItemRepository;
+import com.example.stemshop.repositories.OrderRepository;
 import com.example.stemshop.repositories.PaymentRepository;
+import com.example.stemshop.repositories.ProductRepository;
+import com.example.stemshop.services.cart.CartService;
 import com.example.stemshop.util.PaymentMapper;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
+    private final CartService cartService;
 
     private final PaymentRepository paymentRepository;
+    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
+    private final OrderItemRepository orderItemRepository;
+
     private final PaymentMapper paymentMapper;
 
     public String createCheckoutSession(Order order) throws StripeException {
@@ -33,15 +49,16 @@ public class PaymentService {
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl(""+order.getId())
-                .setCancelUrl(""+order.getId())
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setSuccessUrl("https://github.com/Te7Ro"+order.getId())
+                .setCancelUrl("https://github.com/Te7Ro"+order.getId())
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity(1L)
                                 .setPriceData(
                                         SessionCreateParams.LineItem.PriceData.builder()
-                                                .setCurrency("kzt")
-                                                .setUnitAmount((long) order.getTotalPrice() * 100) // в тиынах
+                                                .setCurrency("usd")
+                                                .setUnitAmount((long)order.getTotalPrice())
                                                 .setProductData(
                                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                                 .setName("Оплата заказа №" + order.getId())
@@ -65,6 +82,42 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         return paymentMapper.toResponse(payment);
+    }
+
+    @Transactional
+    public void confirmPayment(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException("Заказ не найден"));
+
+        if (order.getStatus() == OrderStatus.CONFIRMED || order.getStatus() == OrderStatus.CANCELLED) {
+            throw new OrderException("Оплата уже обработана");
+        }
+
+        // Сохраняем Payment
+        Payment payment = new Payment();
+        payment.setOrder(order);
+        payment.setAmount(order.getTotalPrice());
+        payment.setPaymentStatus(PaymentStatus.PAID);
+        payment.setPaymentMethod(PaymentMethod.CARD);
+        paymentRepository.save(payment);
+
+        // Уменьшаем количество товаров
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrder(order);
+        for (OrderItem item : orderItems) {
+            Product product = item.getProduct();
+            if (product.getStock() < item.getQuantity()) {
+                throw new OrderException("Недостаточно товара на складе: " + product.getName());
+            }
+            product.setStock(product.getStock() - item.getQuantity());
+            productRepository.save(product);
+        }
+
+        // Меняем статус заказа
+        order.setStatus(OrderStatus.CONFIRMED);
+        orderRepository.save(order);
+
+        // Чистим корзину
+        cartService.clear(order.getId());
     }
 
 }

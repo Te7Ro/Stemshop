@@ -1,7 +1,6 @@
 package com.example.stemshop.security;
 
 import com.example.stemshop.models.User;
-import com.example.stemshop.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -13,7 +12,6 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -40,7 +38,7 @@ public class JwtProvider {
 
     public String generateAccessToken(@NonNull User user) {
         LocalDateTime now = LocalDateTime.now();
-        Instant accessExpirationInstant = now.plusMinutes(15)
+        Instant accessExpirationInstant = now.plusHours(1)
                 .atZone(ZoneId.systemDefault())
                 .toInstant();
         Date accessExpiration = Date.from(accessExpirationInstant);

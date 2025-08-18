@@ -25,7 +25,7 @@ public class Payment {
     private Order order;
 
     @Column(name="amount")
-    private int amount;
+    private Integer amount;
 
     @Column(name="payment_method")
     @Enumerated(EnumType.STRING)

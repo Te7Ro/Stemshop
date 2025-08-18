@@ -10,8 +10,6 @@ import com.example.stemshop.models.User;
 import com.example.stemshop.repositories.OrderRepository;
 import com.example.stemshop.repositories.ProductRepository;
 import com.example.stemshop.repositories.ReviewRepository;
-import com.example.stemshop.repositories.UserRepository;
-import com.example.stemshop.services.auth.AuthService;
 import com.example.stemshop.services.user.UserService;
 import com.example.stemshop.util.ReviewMapper;
 import jakarta.transaction.Transactional;
@@ -24,10 +22,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
-    private final AuthService authService;
-
     private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final ReviewMapper reviewMapper;
@@ -36,7 +31,7 @@ public class ReviewService {
     @Transactional
     public void makeReview(ReviewAddRequest request) {
         final User user = userService.getUser();
-        final Product product = productRepository.findByArticle(request.getProductArticle())
+        final Product product = productRepository.findBySku(request.getProductSku())
                 .orElseThrow(() -> new NotFoundException("Товар не найден"));
 
         if(!orderRepository.existsProductByUser(user.getId(), product.getId())) {
@@ -59,8 +54,8 @@ public class ReviewService {
         productRepository.save(product);
     }
 
-    public List<ReviewResponse> getReviewByProduct(String productArticle) {
-        final Product product = productRepository.findByArticle(productArticle)
+    public List<ReviewResponse> getReviewByProduct(String productSku) {
+        final Product product = productRepository.findBySku(productSku)
                 .orElseThrow(() -> new NotFoundException("Товар не найден"));
 
         List<Review> reviews = reviewRepository.findAllByProduct(product);

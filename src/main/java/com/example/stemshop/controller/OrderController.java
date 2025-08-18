@@ -2,7 +2,6 @@ package com.example.stemshop.controller;
 
 import com.example.stemshop.dto.request.order.OrderStatusChangeRequest;
 import com.example.stemshop.dto.response.order.OrderResponse;
-import com.example.stemshop.dto.response.order.PaymentResponse;
 import com.example.stemshop.services.order.OrderService;
 import com.stripe.exception.StripeException;
 import jakarta.annotation.Nullable;
@@ -34,7 +33,8 @@ public class OrderController {
             @PathVariable Long id,
             @RequestBody OrderStatusChangeRequest request
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(id, request));
+        orderService.changeOrderStatus(id, request);
+        return ResponseEntity.ok().build();
     }
 
 

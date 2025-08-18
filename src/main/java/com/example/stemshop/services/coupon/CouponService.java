@@ -1,5 +1,6 @@
 package com.example.stemshop.services.coupon;
 
+import com.example.stemshop.data.enums.DiscountType;
 import com.example.stemshop.dto.request.coupon.CouponAddRequest;
 import com.example.stemshop.dto.request.coupon.CouponUpdateRequest;
 import com.example.stemshop.dto.response.coupon.CouponResponse;
@@ -32,10 +33,12 @@ public class CouponService {
     public CouponResponse addCoupon(CouponAddRequest request) {
         Coupon coupon = new Coupon();
         coupon.setCode(request.getCode());
-        coupon.setDiscountPercent(request.getDiscountPercent());
-        coupon.setDiscountAmount(request.getDiscountAmount());
+        coupon.setDiscountType(request.getDiscountType());
+        coupon.setDiscountValue(request.getDiscountValue());
+        coupon.setMinOrderAmount(request.getMinOrderAmount());
         coupon.setValidFrom(request.getValidFrom());
         coupon.setValidTo(request.getValidTo());
+        coupon.setUsageLimit(request.getUsageLimit());
         couponRepository.save(coupon);
         return couponMapper.toResponse(coupon);
     }
@@ -43,10 +46,14 @@ public class CouponService {
     public CouponResponse updateCoupon(String code, CouponUpdateRequest request) {
         final Coupon coupon = couponRepository.findByCode(code)
                 .orElseThrow(() -> new CouponException("Купон не найден"));
-        if(request.getDiscountPercent() != null) coupon.setDiscountPercent(request.getDiscountPercent());
-        if(request.getDiscountAmount() != null) coupon.setDiscountAmount(request.getDiscountAmount());
-        if(request.getValidFrom() != null) coupon.setValidFrom(request.getValidFrom());
-        if(request.getValidTo() != null) coupon.setValidTo(request.getValidTo());
+
+        if (request.getDiscountType() != null) coupon.setDiscountType(request.getDiscountType());
+        if (request.getDiscountValue() != null) coupon.setDiscountValue(request.getDiscountValue());
+        if (request.getMinOrderAmount() != null) coupon.setMinOrderAmount(request.getMinOrderAmount());
+        if (request.getValidFrom() != null) coupon.setValidFrom(request.getValidFrom());
+        if (request.getValidTo() != null) coupon.setValidTo(request.getValidTo());
+        if (request.getUsageLimit() != null) coupon.setUsageLimit(request.getUsageLimit());
+
         couponRepository.save(coupon);
         return couponMapper.toResponse(coupon);
     }
@@ -61,19 +68,43 @@ public class CouponService {
     public int applyCoupon(String code, Order order) {
         final Coupon coupon = couponRepository.findByCode(code)
                 .orElseThrow(() -> new CouponException("Купон не найден"));
-        if(coupon.getDiscountAmount() == 0) {throw new CouponException("Действие купона закончилось");}
-        if(coupon.getValidFrom().isAfter(LocalDateTime.now())) {throw new CouponException("Срок купона еще не начался");}
-        if(coupon.getValidTo().isBefore(LocalDateTime.now())) {throw new CouponException("Срок купона закончилось");}
+
+        // Проверки
+        if (coupon.getValidFrom().isAfter(LocalDateTime.now())) {
+            throw new CouponException("Срок действия купона ещё не начался");
+        }
+        if (coupon.getValidTo().isBefore(LocalDateTime.now())) {
+            throw new CouponException("Срок действия купона истёк");
+        }
+        if (coupon.getUsageLimit() != null && coupon.getUsageLimit() <= 0) {
+            throw new CouponException("Купон больше не доступен");
+        }
+        if (coupon.getDiscountType() == DiscountType.FIXED &&
+                order.getTotalPrice() < coupon.getMinOrderAmount()) {
+            throw new CouponException("Минимальная сумма заказа для этого купона: " + coupon.getMinOrderAmount());
+        }
+
+        int discount;
+        if (coupon.getDiscountType() == DiscountType.PERCENT) {
+            discount = order.getTotalPrice() * coupon.getDiscountValue() / 100;
+        } else { // FIXED
+            discount = coupon.getDiscountValue();
+            if (discount > order.getTotalPrice()) {
+                discount = order.getTotalPrice(); // чтобы скидка не была больше заказа
+            }
+        }
 
         OrderCoupon orderCoupon = new OrderCoupon();
         orderCoupon.setOrder(order);
         orderCoupon.setCoupon(coupon);
         orderCouponRepository.save(orderCoupon);
 
-        coupon.setDiscountAmount(coupon.getDiscountAmount() - 1);
-        couponRepository.save(coupon);
+        if (coupon.getUsageLimit() != null && coupon.getUsageLimit() > 0) {
+            coupon.setUsageLimit(coupon.getUsageLimit() - 1);
+            couponRepository.save(coupon);
+        }
 
-        return order.getTotalPrice() * (coupon.getDiscountPercent() / 100);
+        return discount;
 
     }
 }

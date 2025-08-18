@@ -2,7 +2,6 @@ package com.example.stemshop.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,11 +22,11 @@ public class Product {
     @Column(name="name")
     private String name;
 
-    @Column(name="article")
-    private String article;
+    @Column(name="sku")
+    private String sku;
 
     @Column(name="price")
-    private int price;
+    private Integer price;
 
     @Column(name="photo")
     private String photo;
@@ -39,7 +38,7 @@ public class Product {
     private String technicalCharacteristics;
 
     @Column(name="stock")
-    private int stock;
+    private Integer stock;
 
     @Column(name="brand")
     private String brand;

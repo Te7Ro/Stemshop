@@ -1,5 +1,6 @@
 package com.example.stemshop.dto.request.coupon;
 
+import com.example.stemshop.data.enums.DiscountType;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -11,12 +12,15 @@ public class CouponAddRequest {
     @Size(min = 3, max = 50, message = "Код купона должен быть от 3 до 50 символов")
     private String code;
 
-    @Min(value = 0, message = "Скидка в процентах не может быть меньше 0%")
-    @Max(value = 100, message = "Скидка в процентах не может быть больше 100%")
-    private int discountPercent;
+    @NotNull(message = "Тип скидки обязателен")
+    private DiscountType discountType;
 
-    @PositiveOrZero(message = "Количество купонов должна быть 0 или больше")
-    private int discountAmount;
+    @NotNull(message = "Значение купона обязательна")
+    @Min(value = 1, message = "Скидка должна быть больше 0")
+    private Integer discountValue;
+
+    @Min(value = 0, message = "Минимальная сумма заказа не может быть отрицательной")
+    private Integer minOrderAmount;
 
     @NotNull(message = "Дата начала действия обязательна")
     private LocalDateTime validFrom;
@@ -24,4 +28,8 @@ public class CouponAddRequest {
     @NotNull(message = "Дата окончания действия обязательна")
     @Future(message = "Дата окончания должна быть в будущем")
     private LocalDateTime validTo;
+
+    @NotNull(message = "Количество использовании обязательно")
+    @Min(value = 0, message = "Лимит использования не может быть отрицательным")
+    private Integer usageLimit;
 }

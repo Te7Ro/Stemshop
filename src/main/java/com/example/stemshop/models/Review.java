@@ -22,12 +22,12 @@ public class Review {
     @ManyToOne
     private Product product;
 
-    @JoinColumn(name="user")
+    @JoinColumn(name="user_id")
     @ManyToOne
     private User user;
 
     @Column(name="rating")
-    private int rating;
+    private Integer rating;
 
     @Column(name="comment")
     private String comment;

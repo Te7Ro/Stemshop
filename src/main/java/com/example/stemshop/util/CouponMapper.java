@@ -9,8 +9,9 @@ public class CouponMapper {
     public CouponResponse toResponse(Coupon coupon) {
         return new CouponResponse(
                 coupon.getCode(),
-                coupon.getDiscountPercent(),
-                coupon.getDiscountAmount(),
+                coupon.getDiscountType(),
+                coupon.getDiscountValue(),
+                coupon.getMinOrderAmount(),
                 coupon.getValidFrom(),
                 coupon.getValidTo()
         );

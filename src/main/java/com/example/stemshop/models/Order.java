@@ -25,7 +25,7 @@ public class Order {
     private User user;
 
     @Column(name="total_price")
-    private int totalPrice;
+    private Integer totalPrice;
 
     @Column(name="status")
     @Enumerated(EnumType.STRING)

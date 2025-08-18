@@ -16,28 +16,29 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
-    public ProductResponse getProductByArticle(String article) {
-        final Product product = productRepository.findByArticle(article)
+    public ProductResponse getProductByArticle(String sku) {
+        final Product product = productRepository.findBySku(sku)
                 .orElseThrow(() -> new ProductException("Товар не найден"));
         return productMapper.toResponse(product);
     }
 
-    public ProductResponse addProduct(ProductAddRequest request) {
+    public void addProduct(ProductAddRequest request) {
         Product product = new Product();
         product.setName(request.getName());
-        product.setArticle(request.getArticle());
+        product.setSku(request.getArticle());
         product.setPrice(request.getPrice());
         product.setPhoto(request.getPhoto());
         product.setDescription(request.getDescription());
         product.setTechnicalCharacteristics(request.getTechnicalCharacteristics());
         product.setStock(request.getStock());
         product.setBrand(request.getBrand());
+        product.setRating(0.0);
+        product.setRatingCount(0);
         productRepository.save(product);
-        return productMapper.toResponse(product);
     }
 
-    public ProductResponse updateProduct(String article, ProductUpdateRequest request) {
-        final Product product = productRepository.findByArticle(article)
+    public void updateProduct(String sku, ProductUpdateRequest request) {
+        final Product product = productRepository.findBySku(sku)
                 .orElseThrow(() -> new ProductException("Товар не найден"));
         if(request.getName() != null) {product.setName(request.getName());}
         if(request.getPrice() != null) {product.setPrice(request.getPrice());}
@@ -47,15 +48,13 @@ public class ProductService {
         if(request.getStock() != null) {product.setStock(request.getStock());}
         if(request.getBrand() != null) {product.setBrand(request.getBrand());}
         productRepository.save(product);
-        return productMapper.toResponse(product);
 
     }
 
-    public String deleteProduct(String article) {
-        final Product product = productRepository.findByArticle(article)
+    public void deleteProduct(String sku) {
+        final Product product = productRepository.findBySku(sku)
                 .orElseThrow(() -> new ProductException("Товар не найден"));
         productRepository.delete(product);
-        return "Товар удален";
     }
 
 
