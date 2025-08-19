@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "Auth", description = "Авторизация")
+@Tag(name = "Авторизация", description = "Авторизация через Json Web Token")
 public class AuthController {
     private final AuthService authService;
 
