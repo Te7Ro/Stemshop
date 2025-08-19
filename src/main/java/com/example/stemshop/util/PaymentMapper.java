@@ -11,7 +11,7 @@ public class PaymentMapper {
 
     public PaymentResponse toResponse(Payment payment) {
         PaymentResponse response = new PaymentResponse();
-        response.setOrder(payment.getOrder());
+        response.setOrderId(payment.getOrder().getId());
         response.setAmount(payment.getAmount());
         response.setPaymentMethod(payment.getPaymentMethod());
         response.setPaymentStatus(payment.getPaymentStatus());

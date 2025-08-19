@@ -2,7 +2,6 @@ package com.example.stemshop.dto.response.order;
 
 import com.example.stemshop.data.enums.PaymentMethod;
 import com.example.stemshop.data.enums.PaymentStatus;
-import com.example.stemshop.models.Order;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -11,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 public class PaymentResponse {
     @Schema(description = "Id заказа", example = "1")
-    private Order order;
+    private Long orderId;
 
     @Schema(description = "Конечная цена", example = "150000")
     private int amount;

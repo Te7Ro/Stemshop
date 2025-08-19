@@ -122,7 +122,7 @@ public class PaymentService {
         orderRepository.save(order);
 
         // Чистим корзину
-        cartService.clear(order.getId());
+        cartService.clear(order.getUser().getId());
 
         return paymentMapper.toResponse(payment);
     }
