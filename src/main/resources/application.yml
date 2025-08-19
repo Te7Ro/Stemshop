@@ -6,6 +6,9 @@ jwt:
     access: ${JWT_ACCESS}
     refresh: ${JWT_REFRESH}
 
+frontend:
+  domain: https://your-frontend-domain.com
+
 stripe:
   secret-key: ${STRIPE_SECRET_KEY}
   public-key: ${STRIPE_PUBLIC_KEY}
