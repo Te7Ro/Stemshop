@@ -1,6 +1,7 @@
 package com.example.stemshop.dto.request.auth;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -12,10 +13,12 @@ import lombok.Setter;
 @Data
 @Getter @Setter
 public class LoginRequest {
+    @Schema(description = "Email пользователя", example = "user@example.com")
     @NotBlank(message = "Почта не может быть пустым")
     @Email(message = "Неправильный формат почты")
     private String email;
 
+    @Schema(description = "Пароль пользователя", example = "Password$123")
     @NotBlank(message = "Пароль не может быть пустым")
     @Size(min = 8, max = 64, message = "Пароль должен быть не меньше 8 и не больше 64 символов")
     @Pattern(
