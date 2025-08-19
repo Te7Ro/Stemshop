@@ -23,7 +23,7 @@ public class RegisterRequest {
     )
     private String password;
 
-    @Schema(description = "ФИО пользователя", example = "newuser@example.com")
+    @Schema(description = "ФИО пользователя", example = "Имя Фамилия")
     @NotBlank(message = "ФИО не может быть пустым")
     @Size(min = 2, max = 100, message = "ФИО должен быть не меньше 2 и не больше 100 символов")
     private String fullName;
