@@ -71,6 +71,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/order/add").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/order").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/api/payment/*").hasAnyRole(STORE_ADMIN,SUPPORT)
+                        .requestMatchers(HttpMethod.GET, "/api/payment/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/product/add").hasAnyRole(STORE_ADMIN, CONTENT_MANAGER)
                         .requestMatchers(HttpMethod.PATCH, "/api/product/*").hasAnyRole(STORE_ADMIN, CONTENT_MANAGER)
                         .requestMatchers(HttpMethod.DELETE, "/api/product/*").hasAnyRole(STORE_ADMIN, CONTENT_MANAGER)
