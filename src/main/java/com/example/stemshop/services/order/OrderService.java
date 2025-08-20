@@ -46,6 +46,8 @@ public class OrderService {
 
         CartResponse cart = cartService.getCart(user.getId());
         int totalPrice = cart.getTotalAmount();
+        order.setTotalPrice(totalPrice);
+        orderRepository.save(order);
 
         if(couponCode != null) {
             totalPrice = totalPrice - couponService.applyCoupon(couponCode, order);
