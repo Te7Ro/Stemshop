@@ -28,14 +28,16 @@ public class PaymentController {
 
     @Operation(summary = "Подтверждение оплаты, происходит автоматический")
     @GetMapping("/success/{orderId}")
-    public ResponseEntity<PaymentResponse> success(@PathVariable Long orderId) {
-        return ResponseEntity.ok(paymentService.confirmPayment(orderId));
+    public ResponseEntity<Void> success(@PathVariable Long orderId) {
+        paymentService.confirmPayment(orderId);
+        return ResponseEntity.ok().build();
 
     }
 
     @Operation(summary = "Отклонение оплаты, происходит автоматический")
     @GetMapping("/canceled/{orderId}")
-    public ResponseEntity<PaymentResponse> canceled(@PathVariable Long orderId) {
-        return ResponseEntity.ok(paymentService.cancelPayment(orderId));
+    public ResponseEntity<Void> canceled(@PathVariable Long orderId) {
+        paymentService.cancelPayment(orderId);
+        return ResponseEntity.ok().build();
     }
 }
