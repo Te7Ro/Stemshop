@@ -15,6 +15,7 @@ import com.example.stemshop.repositories.OrderRepository;
 import com.example.stemshop.repositories.PaymentRepository;
 import com.example.stemshop.repositories.ProductRepository;
 import com.example.stemshop.services.cart.CartService;
+import com.example.stemshop.services.email.EmailService;
 import com.example.stemshop.util.PaymentMapper;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
@@ -38,6 +39,7 @@ public class PaymentService {
     private final OrderItemRepository orderItemRepository;
 
     private final PaymentMapper paymentMapper;
+    private final EmailService emailService;
 
     @Value("${stripe.success-url}")
     private String successUrl;
@@ -123,6 +125,8 @@ public class PaymentService {
 
         // Чистим корзину
         cartService.clear(order.getUser().getId());
+
+        emailService.sendOrderConfirmation(order.getUser().getEmail(), order.getId());
 
         return paymentMapper.toResponse(payment);
     }

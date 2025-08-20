@@ -64,6 +64,9 @@ STRIPE_SECRET_KEY=your_stripe_secret_key
 STRIPE_PUBLIC_KEY=your_stripe_public_key
 STRIPE_SUCCESS_URL=your_stripe_success_url
 STRIPE_CANCEL_URL=your_stripe_cancel_url
+
+MAIL_USERNAME=your_mail_username
+MAIL_PASSWORD=your_mail_app_password
 ```
 
 ### 3. Запуск через Docker Compose
